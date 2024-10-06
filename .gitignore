@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log
+
+# Binary or compiled files
+*.out
+*.exe
+

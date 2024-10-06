@@ -1,7 +1,7 @@
 
-# TriOCR
+# MultiOCR
 
-TriOCR is a multi-OCR system that combines Tesseract, Apple's Vision framework, and Google Cloud Vision API to improve text extraction accuracy from scanned PDF documents. By using multiple OCR engines and comparing their results, TriOCR ensures the most reliable recognition of text, ideal for processing invoices, statements, and other scanned files.
+MultiOCR is a multi-OCR system that combines Tesseract, Apple's Vision framework, and Google Cloud Vision API to improve text extraction accuracy from scanned PDF documents. By using multiple OCR engines and comparing their results, MultiOCR ensures the most reliable recognition of text, ideal for processing invoices, statements, and other scanned files.
 
 ## Features
 - Utilizes **Tesseract**, **Apple's Vision framework**, and **Google Cloud Vision API** for robust text recognition.
@@ -27,8 +27,8 @@ TriOCR is a multi-OCR system that combines Tesseract, Apple's Vision framework, 
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/TriOCR.git
-   cd TriOCR
+   git clone https://github.com/your-username/MultiOCR.git
+   cd MultiOCR
    ```
 
 2. Install dependencies:

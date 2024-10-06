@@ -1,0 +1,6 @@
+.pdf
+.png
+.jpg
+.jpeg
+.tif
+.tiff

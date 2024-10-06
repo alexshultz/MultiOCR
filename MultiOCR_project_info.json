@@ -1,0 +1,45 @@
+{
+  "project_overview": {
+    "objective": "Develop a Python-based tool for processing scanned documents using OCR. The tool processes input files/directories, filters by file type, and includes depth control for directory traversal. It also has a diagnostics mode for detailed debugging."
+  },
+  "current_state": {
+    "implemented_features": {
+      "file_handling": [
+        "Accepts files or directories",
+        "Filters based on file types from filetypes.txt or filetypes.json"
+      ],
+      "directory_traversal": "--depth flag for limiting the depth of directory search",
+      "diagnostics": "--diagnostics flag for detailed debug information",
+      "supported_file_types": "PDFs, PNGs, JPGs, etc., defined in an external file"
+    },
+    "testing_status": "Depth control has been successfully tested and is working correctly"
+  },
+  "tools_and_technologies": {
+    "language": "Python",
+    "libraries": ["os", "argparse", "json"],
+    "command_line_flags": {
+      "depth": "Limits directory traversal depth",
+      "diagnostics": "Enables verbose/debugging mode"
+    },
+    "external_configuration": "filetypes.txt or filetypes.json: Stores supported file types"
+  },
+  "next_steps": {
+    "integrate_ocr_systems": [
+      "Start with Tesseract OCR",
+      "Add optional multi-system comparison (Google Cloud Vision, Apple Vision Framework)"
+    ],
+    "further_optimizations": [
+      "Add image pre-processing features for quality improvement",
+      "Add additional flags for OCR customization (e.g., output formats)"
+    ]
+  },
+  "example_usage": {
+    "with_diagnostics": "python get_input.py --depth 1 --diagnostics",
+    "without_diagnostics": "python get_input.py --depth 1"
+  },
+  "key_considerations": {
+    "memory_constraints": "User expressed concerns about memory as the project grows",
+    "modularity": "Current structure is modular, allowing independent development of components"
+  },
+  "summary": "The tool is stable for file input handling and depth management. Next steps include integrating OCR systems and expanding functionality."
+}
