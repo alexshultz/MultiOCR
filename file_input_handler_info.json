@@ -1,0 +1,112 @@
+{
+    "file_input_handler": {
+        "description": "Handles input files and directories, filtering by supported file types and controlling directory traversal depth. Provides methods to retrieve valid files based on file type and depth settings.",
+        "class": {
+            "name": "FileInputHandler",
+            "description": "The main class in file_input_handler.py, used for managing input files and directories with support for file type filtering and directory depth control.",
+            "methods": {
+                "__init__": {
+                    "description": "Initializes the FileInputHandler object with input path, file types, depth, and diagnostics options.",
+                    "parameters": {
+                        "input_path": {
+                            "type": "string",
+                            "description": "Path to the input directory or file. If not provided, defaults to the current directory."
+                        },
+                        "filetype_file": {
+                            "type": "string",
+                            "description": "Path to the file that lists supported file types (e.g., filetypes.txt or filetypes.json)."
+                        },
+                        "depth": {
+                            "type": "int",
+                            "description": "Optional. Limits how deep the script will traverse directories."
+                        },
+                        "diagnostics": {
+                            "type": "bool",
+                            "description": "Optional. If set to True, enables detailed logging and debugging information during file processing."
+                        }
+                    }
+                },
+                "get_supported_files": {
+                    "description": "Returns a list of files that match the supported file types and directory depth restrictions.",
+                    "returns": {
+                        "type": "list",
+                        "description": "A list of file paths that match the specified file types and are found within the given directory depth."
+                    }
+                },
+                "_load_supported_filetypes": {
+                    "description": "Loads supported file types from a given file (either a .txt or .json file). Private method, used internally.",
+                    "parameters": {
+                        "filetype_file": {
+                            "type": "string",
+                            "description": "Path to the file containing supported file extensions (e.g., .pdf, .png)."
+                        }
+                    }
+                },
+                "_is_supported_file": {
+                    "description": "Checks if a given file has a valid extension based on the loaded file types. Private method.",
+                    "parameters": {
+                        "file_path": {
+                            "type": "string",
+                            "description": "The path to the file being checked."
+                        }
+                    },
+                    "returns": {
+                        "type": "bool",
+                        "description": "True if the file has a valid extension, False otherwise."
+                    }
+                },
+                "_find_files_in_directory": {
+                    "description": "Traverses a directory, finding all files that match the supported file types and obey the directory depth limit. Private method.",
+                    "parameters": {
+                        "directory_path": {
+                            "type": "string",
+                            "description": "The path to the directory being searched."
+                        }
+                    },
+                    "returns": {
+                        "type": "list",
+                        "description": "A list of file paths that match the supported file types found in the directory."
+                    }
+                }
+            }
+        },
+        "usage_examples": [
+            {
+                "description": "Initialize the FileInputHandler class with a directory and file type filter, and limit the directory depth to 2.",
+                "code": "handler = FileInputHandler(input_path='/path/to/input', filetype_file='filetypes.txt', depth=2, diagnostics=True)"
+            },
+            {
+                "description": "Retrieve supported files from the input directory and print each file.",
+                "code": "files = handler.get_supported_files()\nfor file in files:\n  print(f'Processing file: {file}')"
+            }
+        ],
+        "command_line_usage": {
+            "description": "The script can also be executed directly from the command line to handle files and directories.",
+            "arguments": {
+                "input_path": {
+                    "description": "Path to the input file or directory. Defaults to the current directory if not provided."
+                },
+                "--depth": {
+                    "description": "Limits how deep the script will traverse directories. Optional."
+                },
+                "--diagnostics": {
+                    "description": "Enables detailed output for debugging purposes. Optional."
+                }
+            },
+            "examples": [
+                {
+                    "description": "Process all files in the current directory with diagnostics enabled.",
+                    "command": "python file_input_handler.py --diagnostics"
+                },
+                {
+                    "description": "Process a specific directory with a depth limit of 2.",
+                    "command": "python file_input_handler.py /path/to/directory --depth 2"
+                },
+                {
+                    "description": "Process a specific file.",
+                    "command": "python file_input_handler.py /path/to/file.pdf"
+                }
+            ]
+        }
+    }
+}
