@@ -1,75 +1,90 @@
 
-# MultiOCR
+# MultiOCR Project
 
-MultiOCR is a multi-OCR system that combines Tesseract, Apple's Vision framework, and Google Cloud Vision API to improve text extraction accuracy from scanned PDF documents. By using multiple OCR engines and comparing their results, MultiOCR ensures the most reliable recognition of text, ideal for processing invoices, statements, and other scanned files.
+The **MultiOCR Project** will be a comprehensive system for processing files and extracting text using different Optical Character Recognition (OCR) engines. The project will include modular scripts for different OCR engines such as Tesseract, and it is designed to support future OCR integrations (e.g., Google Cloud Vision, Apple Vision, etc.).
 
 ## Features
-- Utilizes **Tesseract**, **Apple's Vision framework**, and **Google Cloud Vision API** for robust text recognition.
-- Implements a comparison algorithm to combine results and resolve discrepancies.
-- Enhances OCR accuracy through pre-processing and multi-system voting.
-- Suitable for automating document processing with high precision.
 
-## Current Progress
-- **File Input Handling**: The system can now accept files or directories as input, filter based on supported file types, and limit directory traversal depth using the `--depth` flag.
-- **Diagnostics Mode**: The `--diagnostics` flag has been added to provide detailed debugging information, including file and directory checks during the processing.
-- **Supported File Types**: File types are now defined in `filetypes.txt` or `filetypes.json`, allowing flexible control over which file formats to process (PDF, PNG, JPG, etc.).
-- **Depth Limitation**: Users can now specify how deep the script will search directories for files using the `--depth` flag.
+- **Multi-Engine OCR**: Each OCR engine is handled by its own script, allowing flexibility and future expansion.
+- **Modular Design**: Easily add new OCR processors by following the structure of the provided `ocr_tesseract.py`.
+- **Batch Processing**: Handles entire directories of files, with support for depth control and file type filtering.
+- **PDF to Image Conversion**: Automatically converts PDF files into images for OCR processing.
+- **Diagnostics**: Optional diagnostics flag provides detailed logging of file processing steps.
+
+## Current OCR Engines
+
+- **Tesseract OCR**: Process files using Tesseract OCR with support for PDFs and image files.
 
 ## Installation
 
-### Requirements
-- Python 3.x
-- Tesseract OCR (optional for OCR processing)
-- OpenCV (optional for image pre-processing)
-- Google Cloud Vision API credentials (for multi-system OCR)
-- `pytesseract`, `pdf2image`, `google-cloud-vision`
+### Setting Up the Project
 
-### Steps
-1. Clone the repository:
+1. **Clone the Repository**:
+2. 
    ```bash
-   git clone https://github.com/your-username/MultiOCR.git
+   git clone https://github.com/your-repo/MultiOCR.git
    cd MultiOCR
    ```
 
-2. Install dependencies:
+2. **Create Conda Environment from `environment.yml`**:
+3. 
    ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Set up Google Cloud Vision API:
-   - Follow [Google's guide](https://cloud.google.com/vision/docs/setup) to set up your API key.
-
-4. Run the sample OCR processing:
-   ```bash
-   python main.py path_to_your_pdf.pdf
+   conda env create -f environment.yml
+   conda activate ocr
    ```
 
 ## Usage
 
-### File Search with Depth Limitation:
-- To search the current directory only:
-  ```bash
-  python get_input.py --depth 0
-  ```
+### Tesseract OCR
 
-- To search the current directory and one level of subdirectories:
-  ```bash
-  python get_input.py --depth 1
-  ```
+The `ocr_tesseract.py` script processes files using Tesseract OCR. You can use it to process both individual files and directories.
 
-### Diagnostics Mode:
-- Enable diagnostics mode to show detailed information about file checking:
-  ```bash
-  python get_input.py --depth 1 --diagnostics
-  ```
+#### Command-Line Usage
+
+To run the Tesseract OCR processor from the command line:
+
+```bash
+python ocr_tesseract.py [input_path] [--output output_dir] [--depth N] [--diagnostics]
+```
+
+- `input_path`: The file or directory you want to process.
+- `--output`: Directory to save the OCR results (defaults to `ocr_output`).
+- `--depth`: Optional, limits directory traversal depth.
+- `--diagnostics`: Optional, enables detailed logging.
+
+#### Example Commands
+
+1. **Process the current directory**:
+   ```bash
+   python ocr_tesseract.py
+   ```
+
+2. **Process a specific directory**:
+   ```bash
+   python ocr_tesseract.py /path/to/input --output /path/to/output
+   ```
+
+3. **Process a PDF file**:
+   ```bash
+   python ocr_tesseract.py /path/to/file.pdf
+   ```
+
+## Adding New OCR Engines
+
+The project is designed to be modular, allowing you to add new OCR engines easily. To add a new engine (e.g., Google Cloud Vision OCR), follow these steps:
+
+1. Create a new script following the pattern of `ocr_tesseract.py` (e.g., `ocr_google.py`).
+2. Use the `FileInputHandler` module to manage input files and directories.
+3. Implement the OCR logic for the new engine.
+4. Integrate the new script into the project and update the main README to reflect the new OCR module.
+
+## Future Plans
+
+- **Google Cloud Vision OCR**: Integration of Google Cloud Vision for OCR processing.
+- **Apple Vision OCR**: Potential support for Apple's Vision framework for OCR.
+
+Stay tuned for future updates!
 
 ## License
-This project is licensed under the **CC0 1.0 Universal (CC0 1.0) Public Domain Dedication**. See the [LICENSE](LICENSE) file for details.
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-### Disclaimer
-This project is in active development and subject to change as we add more features and refine the OCR comparison process.
+This project is licensed under the MIT License.

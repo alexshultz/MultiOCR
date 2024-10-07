@@ -1,45 +1,89 @@
 {
-  "project_overview": {
-    "objective": "Develop a Python-based tool for processing scanned documents using OCR. The tool processes input files/directories, filters by file type, and includes depth control for directory traversal. It also has a diagnostics mode for detailed debugging."
-  },
-  "current_state": {
-    "implemented_features": {
-      "file_handling": [
-        "Accepts files or directories",
-        "Filters based on file types from filetypes.txt or filetypes.json"
-      ],
-      "directory_traversal": "--depth flag for limiting the depth of directory search",
-      "diagnostics": "--diagnostics flag for detailed debug information",
-      "supported_file_types": "PDFs, PNGs, JPGs, etc., defined in an external file"
+    "project_overview": {
+        "objective": "Develop a Python-based tool for processing scanned documents using OCR. The tool processes input files/directories, filters by file type, and includes depth control for directory traversal. It also has a diagnostics mode for detailed debugging. Additionally, the project now includes modular OCR processing, starting with the integration of Tesseract OCR."
     },
-    "testing_status": "Depth control has been successfully tested and is working correctly"
-  },
-  "tools_and_technologies": {
-    "language": "Python",
-    "libraries": ["os", "argparse", "json"],
-    "command_line_flags": {
-      "depth": "Limits directory traversal depth",
-      "diagnostics": "Enables verbose/debugging mode"
+    "current_state": {
+        "implemented_features": {
+            "file_handling": [
+                "Accepts files or directories",
+                "Filters based on file types from filetypes.txt or filetypes.json"
+            ],
+            "directory_traversal": "--depth flag for limiting the depth of directory search",
+            "diagnostics": "--diagnostics flag for detailed debug information",
+            "supported_file_types": "PDFs, PNGs, JPGs, etc., defined in an external file",
+            "ocr_processing": [
+                "Tesseract OCR processing for PDFs and image files",
+                "Automatic PDF to image conversion using pdf2image",
+                "Text extraction using pytesseract"
+            ]
+        },
+        "testing_status": "Depth control has been successfully tested and is working correctly"
     },
-    "external_configuration": "filetypes.txt or filetypes.json: Stores supported file types"
-  },
-  "next_steps": {
-    "integrate_ocr_systems": [
-      "Start with Tesseract OCR",
-      "Add optional multi-system comparison (Google Cloud Vision, Apple Vision Framework)"
-    ],
-    "further_optimizations": [
-      "Add image pre-processing features for quality improvement",
-      "Add additional flags for OCR customization (e.g., output formats)"
-    ]
-  },
-  "example_usage": {
-    "with_diagnostics": "python get_input.py --depth 1 --diagnostics",
-    "without_diagnostics": "python get_input.py --depth 1"
-  },
-  "key_considerations": {
-    "memory_constraints": "User expressed concerns about memory as the project grows",
-    "modularity": "Current structure is modular, allowing independent development of components"
-  },
-  "summary": "The tool is stable for file input handling and depth management. Next steps include integrating OCR systems and expanding functionality."
+    "tools_and_technologies": {
+        "language": "Python",
+        "libraries": [
+            "os",
+            "argparse",
+            "json",
+            "pytesseract",
+            "pdf2image",
+            "Pillow"
+        ],
+        "command_line_flags": {
+            "depth": "Limits directory traversal depth",
+            "diagnostics": "Enables verbose/debugging mode"
+        },
+        "external_configuration": "filetypes.txt or filetypes.json: Stores supported file types, environment.yml for setting up the project environment"
+    },
+    "next_steps": {
+        "integrate_ocr_systems": [
+            "Expand the system to support Google Cloud Vision and Apple Vision",
+            "Enhance the Tesseract module with additional image pre-processing features"
+        ],
+        "further_optimizations": [
+            "Add image pre-processing features for quality improvement",
+            "Add additional flags for OCR customization (e.g., output formats)"
+        ]
+    },
+    "example_usage": {
+        "with_diagnostics": "python get_input.py --depth 1 --diagnostics",
+        "without_diagnostics": "python get_input.py --depth 1",
+        "ocr_tesseract": "python ocr_tesseract.py /path/to/input --output /path/to/output --depth 2"
+    },
+    "key_considerations": {
+        "memory_constraints": "User expressed concerns about memory as the project grows",
+        "modularity": "Current structure is modular, allowing independent development of components"
+    },
+    "summary": "The tool is stable for file input handling and depth management. Next steps include integrating OCR systems and expanding functionality.",
+    "todo": {
+        "tasks": [
+            "Integrate Google Cloud Vision OCR following the modular structure of ocr_tesseract.py.",
+            "Explore and implement image pre-processing techniques to improve OCR accuracy.",
+            "Expand testing to handle large PDFs or images with high memory usage.",
+            "Consider optimizing performance for batch processing large sets of files."
+        ],
+        "priorities": {
+            "high": [
+                "Integrate Google Cloud Vision OCR",
+                "Optimize performance for handling large datasets."
+            ],
+            "medium": [
+                "Enhance image pre-processing features",
+                "Add more error handling and support for edge cases."
+            ],
+            "low": [
+                "Investigate support for additional OCR systems like Apple Vision."
+            ]
+        }
+    },
+    "integration_plan": {
+        "steps": [
+            "To add a new OCR engine, start by creating a new script based on the structure of ocr_tesseract.py.",
+            "Ensure that the new script integrates with the FileInputHandler module to manage input files and directories.",
+            "Implement the new OCR engine's logic (e.g., Google Cloud Vision) following the modular design principles.",
+            "Add testing for the new engine, making sure to test both individual files and directories.",
+            "Update the project JSON and README files to reflect the addition of the new OCR engine.",
+            "Optionally, create a separate JSON file for the new OCR engine to ensure that the AI has structured documentation."
+        ]
+    }
 }

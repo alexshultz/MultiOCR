@@ -1,0 +1,134 @@
+{
+    "script_name": "ocr_tesseract.py",
+    "description": "This script processes files using Tesseract OCR. It handles input files or directories, converts PDFs to images if needed, and runs OCR on the images to extract text. The results are saved as text files.",
+    "features": [
+        "Processes individual files or directories",
+        "Converts PDF files into images for OCR processing",
+        "Runs Tesseract OCR on supported image formats (e.g., PNG, JPEG)",
+        "Provides command-line options to control output directories, depth of directory traversal, and diagnostics"
+    ],
+    "class": {
+        "name": "TesseractProcessor",
+        "description": "Encapsulates the functionality of processing files or directories using Tesseract OCR.",
+        "methods": {
+            "__init__": {
+                "description": "Initializes the TesseractProcessor with output directory and file type filter options.",
+                "parameters": {
+                    "output_dir": {
+                        "type": "string",
+                        "description": "Directory where OCR results will be saved."
+                    },
+                    "filetypes_file": {
+                        "type": "string",
+                        "description": "File defining supported file types (default is filetypes.txt)."
+                    },
+                    "diagnostics": {
+                        "type": "bool",
+                        "description": "Optional. If set to True, enables detailed logging and debugging information during file processing."
+                    }
+                }
+            },
+            "process_file": {
+                "description": "Processes a single file with Tesseract OCR. Converts PDFs to images if necessary.",
+                "parameters": {
+                    "file_path": {
+                        "type": "string",
+                        "description": "Path to the file to be processed."
+                    }
+                }
+            },
+            "process_directory": {
+                "description": "Processes a directory of files using Tesseract OCR, applying depth control for directory traversal.",
+                "parameters": {
+                    "input_path": {
+                        "type": "string",
+                        "description": "Path to the input directory."
+                    },
+                    "depth": {
+                        "type": "int",
+                        "description": "Optional. Limits directory traversal depth."
+                    }
+                }
+            },
+            "_ocr_image": {
+                "description": "Runs Tesseract OCR on an image file or PIL Image object and saves the results.",
+                "parameters": {
+                    "image_input": {
+                        "type": "string or PIL.Image",
+                        "description": "Path to the image file or a PIL Image object."
+                    },
+                    "output_txt_path": {
+                        "type": "string",
+                        "description": "Path where OCR results will be saved."
+                    }
+                }
+            }
+        }
+    },
+    "command_line_usage": {
+        "description": "The script can also be executed directly from the command line to handle files and directories.",
+        "arguments": {
+            "input_path": {
+                "description": "Path to the input file or directory. Defaults to the current directory if not provided."
+            },
+            "--output": {
+                "description": "Path to the directory where OCR results will be saved. Defaults to 'ocr_output'."
+            },
+            "--filetypes": {
+                "description": "Path to a file defining supported file types (e.g., 'filetypes.txt'). Defaults to 'filetypes.txt'."
+            },
+            "--depth": {
+                "description": "Limits directory traversal depth (optional)."
+            },
+            "--diagnostics": {
+                "description": "Enables detailed logging for debugging purposes (optional)."
+            }
+        },
+        "examples": [
+            {
+                "description": "Process all files in the current directory with default settings:",
+                "command": "python ocr_tesseract.py"
+            },
+            {
+                "description": "Process a specific directory and save results to a custom output directory:",
+                "command": "python ocr_tesseract.py /path/to/input --output /path/to/output"
+            },
+            {
+                "description": "Process a directory with depth limitation and diagnostics enabled:",
+                "command": "python ocr_tesseract.py /path/to/input --depth 2 --diagnostics"
+            },
+            {
+                "description": "Process a specific file:",
+                "command": "python ocr_tesseract.py /path/to/file.pdf"
+            }
+        ]
+    },
+    "workflow": {
+        "description": "The script operates in several stages:",
+        "steps": [
+            {
+                "name": "File Input Handling",
+                "description": "Accepts a single file or directory as input. If a directory is provided, it traverses the directory (up to the specified depth) to locate files that match the supported file types."
+            },
+            {
+                "name": "PDF to Image Conversion",
+                "description": "If the input is a PDF, the script converts each page of the PDF into an image using 'pdf2image'."
+            },
+            {
+                "name": "OCR Processing",
+                "description": "For each image, the script runs Tesseract OCR to extract text. The results are saved as `.txt` files in the specified output directory."
+            },
+            {
+                "name": "Diagnostics",
+                "description": "When the `--diagnostics` flag is enabled, the script provides detailed logging of the processing steps, including file discovery, PDF conversion, and OCR results."
+            }
+        ]
+    },
+    "integration": {
+        "description": "The `ocr_tesseract.py` script can be integrated into other Python projects by importing the `TesseractProcessor` class.",
+        "example": {
+            "description": "Programmatic usage example:",
+            "code": "from ocr_tesseract import TesseractProcessor\n\nprocessor = TesseractProcessor(output_dir='/path/to/output')\nprocessor.process_file('/path/to/file.pdf')"
+        }
+    }
+}

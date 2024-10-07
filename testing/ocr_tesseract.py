@@ -1,24 +1,24 @@
 import os
-import argparse
 import pytesseract
 from pdf2image import convert_from_path
 from PIL import Image
-from file_input_handler import FileInputHandler  # Import the class from the renamed file
+from file_input_handler import FileInputHandler  # Import the input handler
 
 class TesseractProcessor:
-    def __init__(self, input_path, output_dir, filetypes_file='filetypes.txt', depth=None, diagnostics=False):
+    def __init__(self, output_dir, filetypes_file='filetypes.txt', diagnostics=False):
         """
-        Initializes the TesseractProcessor with paths and processing options.
-        :param input_path: Path to the input file or directory.
+        Initializes the TesseractProcessor with output directory and file type filter options.
         :param output_dir: Directory where OCR results will be saved.
         :param filetypes_file: File defining supported file types (default is filetypes.txt).
-        :param depth: Directory traversal depth (optional).
         :param diagnostics: Enable detailed logging for debugging (optional).
         """
-        self.input_path = input_path
         self.output_dir = output_dir
+        self.filetypes_file = filetypes_file
         self.diagnostics = diagnostics
-        self.file_handler = FileInputHandler(input_path, filetypes_file, depth, diagnostics)
+
+        # Create the output directory if it does not exist
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
 
     def process_file(self, file_path):
         """
@@ -35,15 +35,31 @@ class TesseractProcessor:
             for i, image in enumerate(images):
                 image_path = os.path.join(self.output_dir, f"{os.path.basename(file_path)}_page_{i+1}.png")
                 image.save(image_path, 'PNG')
-                self.ocr_image(image, os.path.join(self.output_dir, f"{os.path.basename(file_path)}_page_{i+1}.txt"))
+                self._ocr_image(image, os.path.join(self.output_dir, f"{os.path.basename(file_path)}_page_{i+1}.txt"))
         else:
             # If not PDF, assume it's an image
-            self.ocr_image(file_path, os.path.join(self.output_dir, f"{os.path.basename(file_path)}.txt"))
+            self._ocr_image(file_path, os.path.join(self.output_dir, f"{os.path.basename(file_path)}.txt"))
 
-    def ocr_image(self, image_input, output_txt_path):
+    def process_directory(self, input_path, depth=None):
         """
-        Runs Tesseract OCR on an image and saves the results to a text file.
-        :param image_input: Path to the image file or a PIL Image object.
+        Processes a directory of files using Tesseract OCR, applying depth control for directory traversal.
+        :param input_path: Path to the input directory.
+        :param depth: Limits directory traversal depth (optional).
+        """
+        # Initialize the file handler
+        file_handler = FileInputHandler(input_path, self.filetypes_file, depth=depth, diagnostics=self.diagnostics)
+
+        # Get the list of supported files
+        input_files = file_handler.get_supported_files()
+
+        # Process each file
+        for file_path in input_files:
+            self.process_file(file_path)
+
+    def _ocr_image(self, image_input, output_txt_path):
+        """
+        Runs Tesseract OCR on an image file and saves the results.
+        :param image_input: Path to image file or PIL Image object.
         :param output_txt_path: Path where OCR results will be saved.
         """
         if isinstance(image_input, str):  # If input is a file path
@@ -62,23 +78,10 @@ class TesseractProcessor:
         if self.diagnostics:
             print(f"OCR result saved to {output_txt_path}")
 
-    def prepare_and_process_files(self):
-        """
-        Prepares and processes all input files using Tesseract OCR.
-        """
-        # Get the list of files to process from FileInputHandler
-        input_files = self.file_handler.get_supported_files()
 
-        # Create output directory if it doesn't exist
-        if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
+if __name__ == "__main__":
+    import argparse
 
-        # Process each file
-        for file_path in input_files:
-            self.process_file(file_path)
-
-
-def main():
     # Set up argument parsing for command-line inputs
     parser = argparse.ArgumentParser(description="Process files for OCR using Tesseract")
     parser.add_argument('input_path', nargs='?', default=os.getcwd(), help="Path to the input file or directory (defaults to current directory)")
@@ -90,17 +93,11 @@ def main():
     # Parse the arguments
     args = parser.parse_args()
 
-    # Initialize the TesseractProcessor with the parsed arguments
-    processor = TesseractProcessor(
-        input_path=args.input_path,
-        output_dir=args.output,
-        filetypes_file=args.filetypes,
-        depth=args.depth,
-        diagnostics=args.diagnostics
-    )
+    # Initialize the TesseractProcessor
+    processor = TesseractProcessor(output_dir=args.output, filetypes_file=args.filetypes, diagnostics=args.diagnostics)
 
-    # Start processing the files
-    processor.prepare_and_process_files()
-
-if __name__ == "__main__":
-    main()
+    # Check if the input path is a file or a directory
+    if os.path.isdir(args.input_path):
+        processor.process_directory(args.input_path, depth=args.depth)
+    else:
+        processor.process_file(args.input_path)

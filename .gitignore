@@ -9,3 +9,5 @@
 *.out
 *.exe
 
+# Ignore ocr_output folder in testing directory
+testing/ocr_output/
