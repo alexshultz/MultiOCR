@@ -1,0 +1,123 @@
+{
+  "project_name": "MultiOCR",
+  "objective": "Develop a Python-based multi-OCR system that utilizes Tesseract, Apple's Vision framework, and Google Cloud Vision API for enhanced text recognition accuracy.",
+  "features": {
+    "core": [
+      "Utilize multiple OCR systems (Tesseract, Apple's Vision, Google Cloud Vision)",
+      "Compare OCR results from each system and resolve discrepancies",
+      "Handle various file input types (PDF, PNG, JPG, etc.)",
+      "Support pre-processing for image enhancement before OCR (e.g., contrast adjustment)"
+    ],
+    "file_handling": [
+      "Accept single files or directories as input",
+      "Filter files based on supported file types (defined in filetypes.txt or filetypes.json)",
+      "Limit directory traversal depth using the --depth flag",
+      "Provide a diagnostics mode to output detailed debug information during file processing"
+    ],
+    "processing": [
+      "Pre-process images (optional): Enhance contrast, clean noise, de-skew for better OCR results",
+      "Run text recognition on each image or document using multiple OCR systems",
+      "Compare and reconcile results from different systems to produce the most accurate text"
+    ],
+    "output": [
+      "Output OCR results in a structured format (e.g., JSON, plain text, or CSV)",
+      "Provide logs or diagnostics for processing steps when the --diagnostics flag is enabled"
+    ]
+  },
+  "current_progress": {
+    "file_input_handling": {
+      "status": "Complete",
+      "description": "The tool accepts files or directories as input, filters based on supported file types, and uses a --depth flag for limiting directory traversal."
+    },
+    "diagnostics_mode": {
+      "status": "Complete",
+      "description": "The --diagnostics flag is implemented to enable detailed logging of file checking, directory traversal, and processing."
+    },
+    "depth_limitation": {
+      "status": "Complete",
+      "description": "Users can specify how deep the script will search through directories using the --depth flag."
+    },
+    "supported_file_types": {
+      "status": "Complete",
+      "description": "Supported file types (e.g., PDFs, PNGs, JPGs) are now defined in external files like filetypes.txt or filetypes.json."
+    },
+    "ocr_processing": {
+      "status": "Tesseract OCR Integrated",
+      "description": "The Tesseract OCR engine has been integrated for processing PDFs and images. The ocr_tesseract.py script is functional and ready for further testing."
+    },
+    "testing": {
+      "status": "Ongoing",
+      "description": "Depth control has been successfully tested, and the system works as expected. Next steps include further testing with more files and formats."
+    }
+  },
+  "next_steps": {
+    "ocr_integration": [
+      "Further testing of Tesseract OCR with larger datasets.",
+      "Integrate Google Cloud Vision and Apple Vision frameworks to expand OCR capabilities.",
+      "Develop a result comparison algorithm to combine the outputs from multiple OCR engines."
+    ],
+    "pre_processing": [
+      "Enhance image pre-processing using OpenCV for better OCR results.",
+      "Focus on contrast adjustment, noise reduction, and de-skewing features."
+    ],
+    "output_enhancements": [
+      "Add options to output OCR results in various formats (e.g., JSON, plain text, CSV)",
+      "Provide configurable output options for further customization"
+    ]
+  },
+  "tools_and_technologies": {
+    "language": "Python",
+    "libraries": ["os", "argparse", "json", "pytesseract", "pdf2image", "google-cloud-vision", "OpenCV", "Pillow"],
+    "external_configuration": {
+      "filetypes_txt_json": "Stores supported file types in plain text or JSON format, allowing flexibility in what files can be processed."
+    },
+    "command_line_flags": {
+      "--depth": "Limits directory traversal depth for file searching",
+      "--diagnostics": "Enables detailed debug output during processing",
+      "input_path": "Accepts either a single file or a directory path"
+    },
+    "ocr_systems": {
+      "Tesseract": {
+        "description": "Open-source OCR engine",
+        "integration_status": "Integrated"
+      },
+      "Google Cloud Vision": {
+        "description": "Cloud-based OCR system",
+        "integration_status": "Planned, API setup required"
+      },
+      "Apple Vision Framework": {
+        "description": "Built-in OCR system for Apple devices",
+        "integration_status": "Planned"
+      }
+    }
+  },
+  "example_usage": {
+    "basic_usage": "python get_input.py --depth 1",
+    "diagnostics_mode": "python get_input.py --depth 1 --diagnostics",
+    "ocr_processing": "python ocr_tesseract.py /path/to/file.pdf --output /path/to/output"
+  },
+  "key_considerations": {
+    "memory_usage": "The user has expressed concerns about memory usage, especially as the project scales with large datasets or multiple OCR systems.",
+    "scalability": "The system is being tested for its ability to handle large datasets, especially in terms of memory usage when working with large PDF files or multiple OCR engines.",
+    "modular_design": "The system is being developed with modularity in mind, so each component (file handling, OCR processing, result comparison) can be developed and tested independently."
+  },
+  "complex_code_snippets": {
+    "pdf_to_image_conversion": {
+      "description": "Converting PDFs into images using pdf2image and PIL is crucial for OCR processing.",
+      "code": "from pdf2image import convert_from_path\nfrom PIL import Image\n\n# Convert PDF to images and process each image\nimages = convert_from_path('/path/to/file.pdf')\nfor i, image in enumerate(images):\n    image_path = f\"output_page_{i+1}.png\"\n    image.save(image_path, 'PNG')"
+    },
+    "directory_traversal_with_depth_limitation": {
+      "description": "Managing directory traversal with depth limitation using os.walk and manual depth checks.",
+      "code": "import os\n\n# Traverse directories with depth control\ncurrent_depth = directory_path.count(os.sep)\nfor root, _, filenames in os.walk(directory_path):\n    relative_depth = root.count(os.sep) - current_depth\n    if depth is not None and relative_depth > depth:\n        continue  # Skip deeper directories\n    for filename in filenames:\n        file_path = os.path.join(root, filename)\n        # Process each file"
+    },
+    "tesseract_ocr_processing": {
+      "description": "Running Tesseract OCR on images using pytesseract and PIL for OCR text extraction.",
+      "code": "import pytesseract\nfrom PIL import Image\n\n# Run Tesseract OCR on an image\nimage = Image.open('path/to/image.png')\ntext = pytesseract.image_to_string(image)\n\n# Save the OCR result to a text file\nwith open('output.txt', 'w') as f:\n    f.write(text)"
+    },
+    "file_input_handling_with_file_type_filtering": {
+      "description": "Loading and handling supported file types from filetypes.txt or filetypes.json.",
+      "code": "import json\n\ndef load_supported_filetypes(filetype_file):\n    if filetype_file.endswith('.txt'):\n        with open(filetype_file, 'r') as f:\n            return [line.strip() for line in f if line.strip()]\n    elif filetype_file.endswith('.json'):\n        with open(filetype_file, 'r') as f:\n            return json.load(f)\n    else:\n        raise ValueError(\"Unsupported file type definition.\")"
+    }
+  },
+  "conclusion": "The MultiOCR project is in active development, with file input handling and diagnostics completed. The next steps focus on integrating OCR systems, enhancing image pre-processing, and expanding output formats."
+}
