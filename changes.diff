@@ -1,0 +1,129 @@
+diff --git a/multiocr-project-plan_05_03.json b/multiocr-project-plan_05_04.json
+index 1234567..89abcde 100644
+--- a/multiocr-project-plan_05_03.json
++++ b/multiocr-project-plan_05_04.json
+@@ -204,7 +204,123 @@
+       "TesseractEngine",
+       "GoogleVisionEngine",
+       "AppleVisionEngine"
+-    ]
++    ],
++    "interface_specification": {
++      "abstract_base_class": "OCREngine",
++      "methods": [
++        {
++          "name": "__init__",
++          "parameters": [
++            {
++              "name": "engine_options",
++              "type": "Dict[str, Any]",
++              "description": "A dictionary of engine-specific options"
++            }
++          ],
++          "description": "Initialize the OCR engine with optional engine-specific settings."
++        },
++        {
++          "name": "prepare_file",
++          "parameters": [
++            {
++              "name": "file_path",
++              "type": "str",
++              "description": "Path to the file to be prepared"
++            }
++          ],
++          "return_type": "Any",
++          "description": "Prepare a file for OCR processing. This may involve converting file formats, preprocessing images, or any other necessary steps."
++        },
++        {
++          "name": "process_file",
++          "parameters": [
++            {
++              "name": "prepared_file",
++              "type": "Any",
++              "description": "File object returned by prepare_file method"
++            }
++          ],
++          "return_type": "Any",
++          "description": "Perform OCR on the prepared file."
++        },
++        {
++          "name": "parse_results",
++          "parameters": [
++            {
++              "name": "raw_results",
++              "type": "Any",
++              "description": "Raw results returned by process_file method"
++            }
++          ],
++          "return_type": "Dict[str, Any]",
++          "description": "Parse the raw OCR results into a standardized format."
++        },
++        {
++          "name": "run_ocr",
++          "parameters": [
++            {
++              "name": "file_path",
++              "type": "str",
++              "description": "Path to the file to be processed"
++            }
++          ],
++          "return_type": "Dict[str, Any]",
++          "description": "Run the complete OCR process on a file. This method should not be overridden."
++        },
++        {
++          "name": "get_engine_name",
++          "return_type": "str",
++          "description": "Return the name of the OCR engine."
++        },
++        {
++          "name": "get_supported_file_types",
++          "return_type": "List[str]",
++          "description": "Return a list of file extensions supported by this engine."
++        },
++        {
++          "name": "get_engine_health",
++          "return_type": "str",
++          "description": "Return the current health status of the engine."
++        }
++      ],
++      "standardized_result_format": {
++        "text": "str",
++        "confidence": "float",
++        "pages": [
++          {
++            "page_number": "int",
++            "text": "str",
++            "confidence": "float",
++            "bounding_boxes": [
++              {
++                "text": "str",
++                "confidence": "float",
++                "coordinates": {
++                  "top_left": "(int, int)",
++                  "top_right": "(int, int)",
++                  "bottom_right": "(int, int)",
++                  "bottom_left": "(int, int)"
++                }
++              }
++            ]
++          }
++        ],
++        "metadata": {
++          "engine_name": "str",
++          "processing_time": "float"
++        }
++      },
++      "error_handling": [
++        "Raise FileNotFoundError if the input file doesn't exist",
++        "Raise ValueError for invalid input parameters",
++        "Raise OCREngineError (a custom exception) for engine-specific errors"
++      ],
++      "asynchronous_design": "All main processing methods are designed to be asynchronous",
++      "performance_considerations": [
++        "Engines should be designed with memory efficiency in mind, especially for large files",
++        "Consider implementing batch processing capabilities where applicable"
++      ],
++      "health_monitoring": "The get_engine_health method should return one of three states: GREEN, YELLOW, RED"
++    }
+   },
+   "error_handling": {
