@@ -95,4 +95,7 @@ dependencies:
   - yarl=1.13.1
   - zstandard=0.23.0
   - zstd=1.5.6
+  - pytest
+  - pytest-asyncio
+
 prefix: /opt/homebrew/Caskroom/miniconda/base/envs/ocr
