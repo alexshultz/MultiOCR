@@ -1,6 +1,6 @@
 {
   "project_name": "MultiOCR",
-  "project_plan_version": "5.4",
+  "project_plan_version": "5.5",
   "last_updated": "2024-10-15",
   "objective": "Develop a Python-based multi-OCR system that utilizes multiple OCR engines for enhanced text recognition accuracy, with robust logging, health monitoring, error handling, and user-friendly operation.",
   "overall_architecture": [
@@ -190,12 +190,22 @@
     },
     "OCR_Engine_Manager": {
       "name": "OCREngineManager",
+      "responsibilities": [
+        "Manage multiple OCR engines",
+        "Coordinate OCR processes across engines",
+        "Handle engine-specific file preparation",
+        "Implement parallel processing for OCR tasks",
+        "Collect and store results from engines",
+        "Manage errors in individual engines",
+        "Track performance metrics"
+      ],
       "features": [
         "Asynchronous file processing using Python's asyncio",
         "Concurrent execution of multiple OCR engines",
         "Multiple OCR engine management with dynamic registration",
         "Comprehensive error handling for engine failures and unexpected exceptions",
-        "Integration with logging and health monitoring systems"
+        "Integration with logging and health monitoring systems",
+        "JSON serialization error handling"
       ],
       "implementation_details": {
         "file": "ocr_engine_manager.py",
@@ -205,12 +215,14 @@
           "process_file",
           "process_files",
           "get_overall_health",
-          "get_engine_health"
+          "get_engine_health",
+          "_run_engine"
         ],
         "additional_notes": [
           "Uses asyncio for efficient concurrent processing",
           "Implements a custom OCREngineError for specific error handling",
-          "Designed with clear separation of concerns for each OCR engine"
+          "Designed with clear separation of concerns for each OCR engine",
+          "Handles JSON serialization errors gracefully"
         ],
         "engine_failure_handling": "Continue processing with remaining engines if one fails",
         "processing_completion": "Stop when all engines have processed or failed"
@@ -225,8 +237,52 @@
         "Provide user interface for changing debug levels at runtime",
         "Display progress bar and file counter (current/total)"
       ],
-      "status": "Partially implemented, needs integration",
-      "notes": "Design should account for real-time updates from Health Monitoring system"
+      "status": "Not implemented",
+      "notes": "Design should account for real-time updates from Health Monitoring system",
+      "components": {
+        "ProgressTracker": {
+          "description": "Manages and displays overall progress and current file progress",
+          "features": [
+            "Overall progress bar",
+            "Current file progress indicator",
+            "Elapsed time display"
+          ]
+        },
+        "MessageHandler": {
+          "description": "Manages different types of messages (info, warning, error)",
+          "features": [
+            "Color-coded output (e.g., red for errors, yellow for warnings)",
+            "Verbose mode toggle"
+          ]
+        },
+        "PerformanceMonitor": {
+          "description": "Displays performance metrics",
+          "features": [
+            "Processing speed (files/second)",
+            "Average time per file",
+            "Resource usage (optional)"
+          ]
+        },
+        "Logger": {
+          "description": "Handles logging of display output",
+          "features": [
+            "Log normal information by default",
+            "Option to log only display output",
+            "Option to log all information"
+          ]
+        }
+      },
+      "behavior": {
+        "initialization": "Create display layout with sections for progress, current file, and messages",
+        "update_frequency": {
+          "progress": "Update on each file completion and every 1% of overall progress",
+          "current_file": "Update when new file starts processing",
+          "performance_metrics": "Update every 5 seconds",
+          "messages": "Display immediately when received"
+        },
+        "resizing": "Automatically adjust layout when terminal is resized",
+        "verbose_mode": "Display additional information in bottom 1/3 of screen, scrollable"
+      }
     },
     "Result_Reconciler": {
       "responsibilities": [
@@ -241,7 +297,7 @@
         "Format reconciled OCR results",
         "Support multiple output formats (initially text, consider JSON for future)"
       ],
-      "status": "Not implemented",
+      "status": "Partially implemented",
       "implementation_details": {
         "output_structure": {
           "directory_structure": "Create subdirectory for each engine (e.g., tesseract, google-vision, apple-vision)",
@@ -251,12 +307,22 @@
     }
   },
   "concrete_ocr_engines": {
-    "status": "Not implemented",
+    "status": "Partially implemented",
+    "implemented_engines": [
+      "TesseractEngine"
+    ],
     "planned_engines": [
-      "TesseractEngine",
       "GoogleVisionEngine",
       "AppleVisionEngine"
     ],
+    "implementation_notes": {
+      "TesseractEngine": [
+        "Handles PDF and image files",
+        "Converts Tesseract version to string for JSON serialization",
+        "Implements health monitoring based on recent operations",
+        "Removes references to deprecated pytesseract methods (get_psm, get_oem)"
+      ]
+    },
     "interface_specification": {
       "abstract_base_class": "OCREngine",
       "methods": [
@@ -359,7 +425,8 @@
         ],
         "metadata": {
           "engine_name": "str",
-          "processing_time": "float"
+          "processing_time": "float",
+          "tesseract_version": "str"
         }
       },
       "error_handling": [
@@ -373,8 +440,7 @@
         "Consider implementing batch processing capabilities where applicable"
       ],
       "health_monitoring": "The get_engine_health method should return one of three states: GREEN, YELLOW, RED"
-    },
-    "notes": "Each engine will need to implement the OCREngine abstract base class"
+    }
   },
   "error_handling": {
     "categorization": {
@@ -413,6 +479,10 @@
     "partial_results": {
       "handling": "Include in output file, clearly marked as partial",
       "reporting": "List in error summary for user awareness"
+    },
+    "json_serialization": {
+      "strategy": "Catch TypeError exceptions during JSON serialization",
+      "fallback": "Replace non-serializable results with error message"
     }
   },
   "performance_considerations": {
@@ -430,7 +500,7 @@
       "Logging system (including async operations and error handling)",
       "Health monitoring (including status updates and integration)",
       "OCR Engine Manager (including async processing and error scenarios)",
-      "Individual OCR engines (once implemented)"
+      "Individual OCR engines (implemented for TesseractEngine)"
     ],
     "integration_tests": [
       "End-to-end file processing with multiple engines",
@@ -438,9 +508,9 @@
       "Performance under high load with concurrent processing",
       "Health status updates and logging under various conditions"
     ],
-    "status": "To be implemented",
+    "status": "Partially implemented",
     "test_mode": {
-      "behavior": "Simulate entire process without actual OCR processing",
+      "behavior": "Simulate entire process without actual processing",
       "output": "Mimic real processing output to test system logic and flow"
     }
   },
@@ -459,12 +529,12 @@
     "asynchronous_programming": "Use of asyncio for concurrent operations"
   },
   "next_steps": [
-    "Implement concrete OCR engine classes (e.g., TesseractEngine)",
+    "Implement remaining OCR engine classes (GoogleVisionEngine, AppleVisionEngine)",
     "Develop Input Handler component with support for configurable debug levels",
     "Enhance Display Handler for health status and log display, including real-time updates",
     "Implement File Processor component",
     "Create Result Reconciler logic",
-    "Develop Output Formatter with multiple format support"
+    "Enhance Output Formatter with support for additional formats (e.g., JSON, XML)"
   ],
   "future_enhancements": [
     "Implement method to pause and resume processing",
